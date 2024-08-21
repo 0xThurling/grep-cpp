@@ -1,15 +1,28 @@
+#include <cctype>
 #include <iostream>
+#include <ostream>
 #include <string>
 
+bool match(std::string &input_string, const std::string& pattern) {
+    return true;
+}
+
 bool match_pattern(const std::string& input_line, const std::string& pattern) {
-    if (pattern.length() == 1) {
-        return input_line.find(pattern) != std::string::npos;
+    if (pattern[0] == '\0') {
+        return true;
+    } else if (pattern[0] == input_line[0] && pattern.front() != '\0') {
+        return match_pattern(input_line.substr(1), pattern.substr(1));
+    } else if (pattern[0] == '\\' && pattern[1] == 'd') {
+        if (std::isdigit(input_line.front())) {
+            return match_pattern(input_line.substr(1), pattern.substr(2));
+        }
+        return false;
     }
-    else if (pattern == "\\d") {
-        return input_line.find_first_of("1234567890") != std::string::npos;
-    }
-    else if (pattern == "\\w") {
-        return input_line.find_first_of("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890") != std::string::npos;
+    else if (pattern[0] == '\\' && pattern[1] == 'w') {
+        if (std::isalnum(input_line.front())) {
+            return match_pattern(input_line.substr(1), pattern.substr(2));
+        }
+        return false;
     }
     else if (pattern.front() == '[' && pattern.at(1) == '^' && pattern.back() == ']' && pattern.length() > 3) {
         std::string extracted_string = pattern.substr(2, pattern.length() - 3);
