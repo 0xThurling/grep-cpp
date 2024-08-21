@@ -1,11 +1,9 @@
+#include <algorithm>
 #include <cctype>
 #include <iostream>
 #include <ostream>
 #include <string>
 
-bool match(std::string &input_string, const std::string& pattern) {
-    return true;
-}
 
 bool match_pattern(const std::string& input_line, const std::string& pattern) {
     if (pattern[0] == '\0') {
@@ -37,6 +35,18 @@ bool match_pattern(const std::string& input_line, const std::string& pattern) {
     }
 }
 
+bool match(std::string &input_string, const std::string& pattern) {
+    std::string temp = input_string;
+    do {
+      if (match_pattern(temp, pattern)) {
+        return true;
+      } else {
+        temp = temp.substr(1);
+      }
+    } while (temp.front() != '\0');
+    return false;
+}
+
 int main(int argc, char* argv[]) {
     // Flush after every std::cout / std::cerr
     std::cout << std::unitbuf;
@@ -64,7 +74,7 @@ int main(int argc, char* argv[]) {
      std::getline(std::cin, input_line);
     
      try {
-         if (match_pattern(input_line, pattern)) {
+         if (match(input_line, pattern)) {
              return 0;
          } else {
              return 1;
