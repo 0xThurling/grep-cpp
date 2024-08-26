@@ -8,6 +8,12 @@
 bool match_pattern(const std::string& input_line, const std::string& pattern) {
     if (pattern[0] == '\0') {
         return true;
+    } else if (pattern[0] == input_line[0] && pattern[1] == '+') {
+        int count = 0;
+        while (input_line[count] == pattern[0]) {
+            count++;
+        }
+        return match_pattern(input_line.substr(count), pattern.substr(2));
     } else if (pattern[0] == input_line[0] && pattern.front() != '\0') {
         return match_pattern(input_line.substr(1), pattern.substr(1));
     } else if (pattern[0] == '\\' && pattern[1] == 'd') {
