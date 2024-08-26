@@ -6,7 +6,7 @@
 
 
 bool match_pattern(const std::string& input_line, const std::string& pattern) {
-    if (pattern[0] == '\0' || input_line[0] == '\0') {
+    if (pattern[0] == '\0') {
         return true;
     } else if (pattern[0] == input_line[0] && pattern[1] == '+') {
         int count = 0;
@@ -37,8 +37,9 @@ bool match_pattern(const std::string& input_line, const std::string& pattern) {
     else if (pattern.front() == '[' && pattern.back() == ']' && pattern.length() > 2) {
         std::string extracted_string = pattern.substr(1, pattern.length() - 2);
         return input_line.find_first_of(extracted_string) != std::string::npos;
-    }
-    else {
+    } else if (pattern[0] == '^') {
+        return match_pattern(input_line.substr(0), pattern.substr(1));
+    } else {
         std::cout << "Unhandled Pattern: " << pattern << std::endl;
         return false;
     }
@@ -55,9 +56,7 @@ bool match(std::string &input_string, const std::string& pattern) {
         return true;
     }
     do {
-      if (pattern.front() == '^' && match_pattern(temp, pattern.substr(1))) {
-        return true;
-      } else if (match_pattern(temp, pattern)) {
+      if (match_pattern(temp, pattern)) {
         return true;
       } else {
         temp = temp.substr(1);
