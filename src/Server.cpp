@@ -46,9 +46,7 @@ bool match_pattern(const std::string& input_line, const std::string& pattern) {
 
 bool match(std::string &input_string, const std::string& pattern) {
     std::string temp = input_string;
-    if (pattern.front() == '^') {
-        return match(input_string, pattern.substr(1));
-    } else if (pattern.back() == '$') {
+    if (pattern.back() == '$') {
         for (int i = 0; i < pattern.length(); i++) {
             if (pattern[pattern.length() - (2 + i)] != input_string[input_string.length() - (1 + i)]) {
                 return false;
@@ -57,7 +55,9 @@ bool match(std::string &input_string, const std::string& pattern) {
         return true;
     }
     do {
-      if (match_pattern(temp, pattern)) {
+      if (pattern.front() == '^' && match_pattern(temp, pattern.substr(1))) {
+        return true;
+      } else if (match_pattern(temp, pattern)) {
         return true;
       } else {
         temp = temp.substr(1);
