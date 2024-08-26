@@ -14,6 +14,8 @@ bool match_pattern(const std::string& input_line, const std::string& pattern) {
             count++;
         }
         return match_pattern(input_line.substr(count), pattern.substr(2));
+    } else if (pattern[1] == '?') {
+        return match_pattern(input_line.substr(0), pattern.substr(2));
     } else if (pattern[0] == input_line[0] && pattern.front() != '\0') {
         return match_pattern(input_line.substr(1), pattern.substr(1));
     } else if (pattern[0] == '\\' && pattern[1] == 'd') {
