@@ -41,8 +41,6 @@ bool match_pattern(const std::string& input_line, const std::string& pattern) {
     else if (pattern.front() == '[' && pattern.back() == ']' && pattern.length() > 2) {
         std::string extracted_string = pattern.substr(1, pattern.length() - 2);
         return input_line.find_first_of(extracted_string) != std::string::npos;
-    } else if (pattern[0] == '^') {
-        return match_pattern(input_line.substr(0), pattern.substr(1));
     } else {
         std::cout << "Unhandled Pattern: " << pattern << std::endl;
         return false;
@@ -51,6 +49,14 @@ bool match_pattern(const std::string& input_line, const std::string& pattern) {
 
 bool match(std::string &input_string, const std::string& pattern) {
     std::string temp = input_string;
+    if (pattern.front() == '^') {
+        for (int i = 0; i < pattern.length(); i++) {
+            if (pattern[i + 1] != input_string[i]) {
+                return false;
+            }
+        }
+        return true;
+    }
     if (pattern.back() == '$') {
         for (int i = 0; i < pattern.length(); i++) {
             if (pattern[pattern.length() - (2 + i)] != input_string[input_string.length() - (1 + i)]) {
