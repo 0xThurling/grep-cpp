@@ -37,6 +37,9 @@ bool match_pattern(const std::string& input_line, const std::string& pattern) {
 
 bool match(std::string &input_string, const std::string& pattern) {
     std::string temp = input_string;
+    if (pattern.front() == '^') {
+        return match(input_string, pattern.substr(1));
+    }
     do {
       if (match_pattern(temp, pattern)) {
         return true;
