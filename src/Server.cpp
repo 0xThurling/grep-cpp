@@ -36,6 +36,8 @@ bool match_pattern(const std::string& input_line, const std::string& pattern, st
                 return match_pattern(input_line.substr(further_check - 1), pattern.substr(index + 1));
             }
         }
+
+        return false;
     } else if (pattern[0] =='.') {
         return match_pattern(input_line.substr(1), pattern.substr(1), acc);
     } else if (pattern[0] == input_line[0] && pattern[1] == '+') {
