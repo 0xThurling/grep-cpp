@@ -26,8 +26,6 @@ bool match_pattern(const std::string& input_line, const std::string& pattern, st
             innerRegexIndex++;
         }
 
-        std::cout << pattern.substr(5, index - innerRegexIndex - 1) << std::endl;
-
         int left_acc = 0;
         int right_acc = 0;
 
