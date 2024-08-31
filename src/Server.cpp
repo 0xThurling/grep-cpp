@@ -1,21 +1,51 @@
 #include <algorithm>
 #include <cctype>
+#include <functional>
 #include <iostream>
+#include <optional>
 #include <ostream>
 #include <string>
 
 
-bool match_pattern(const std::string& input_line, const std::string& pattern) {
+bool match_pattern(const std::string& input_line, const std::string& pattern, std::optional<std::reference_wrapper<int>> acc = std::nullopt) {
+    if (acc) {
+        acc->get() += 1;
+    }
+
     if (pattern[0] == '\0') {
         return true;
+    } else if (pattern.front() == '(') {
+        int index = 0;
+        int innerRegexIndex = 1;
+
+        while (pattern[index] != ')') {
+            index++;
+        }
+
+        while (std::isalnum(pattern[innerRegexIndex])) {
+            innerRegexIndex++;
+        }
+
+        std::cout << pattern.substr(5, index - innerRegexIndex - 1) << std::endl;
+
+        int left_acc = 0;
+        int right_acc = 0;
+
+        if (pattern[innerRegexIndex] == '|') {
+            if (match_pattern(input_line, pattern.substr(1, innerRegexIndex - 1), left_acc) 
+                || match_pattern(input_line, pattern.substr(innerRegexIndex + 1, index - innerRegexIndex - 1), right_acc)) {
+                int further_check = left_acc > right_acc ? left_acc : right_acc;
+                return match_pattern(input_line.substr(further_check - 1), pattern.substr(index + 1));
+            }
+        }
     } else if (pattern[0] =='.') {
-        return match_pattern(input_line.substr(1), pattern.substr(1));
+        return match_pattern(input_line.substr(1), pattern.substr(1), acc);
     } else if (pattern[0] == input_line[0] && pattern[1] == '+') {
         int count = 0;
         while (input_line[count] == pattern[0]) {
             count++;
         }
-        return match_pattern(input_line.substr(count), pattern.substr(2));
+        return match_pattern(input_line.substr(count), pattern.substr(2), acc);
     } else if (pattern[1] == '?') {
         if(match_pattern(input_line.substr(1), pattern.substr(2))) {
             return true;
@@ -23,16 +53,16 @@ bool match_pattern(const std::string& input_line, const std::string& pattern) {
             return match_pattern(input_line.substr(0), pattern.substr(2));
         }
     } else if (pattern[0] == input_line[0] && pattern.front() != '\0') {
-        return match_pattern(input_line.substr(1), pattern.substr(1));
+        return match_pattern(input_line.substr(1), pattern.substr(1), acc);
     } else if (pattern[0] == '\\' && pattern[1] == 'd') {
         if (std::isdigit(input_line.front())) {
-            return match_pattern(input_line.substr(1), pattern.substr(2));
+            return match_pattern(input_line.substr(1), pattern.substr(2), acc);
         }
         return false;
     }
     else if (pattern[0] == '\\' && pattern[1] == 'w') {
         if (std::isalnum(input_line.front())) {
-            return match_pattern(input_line.substr(1), pattern.substr(2));
+            return match_pattern(input_line.substr(1), pattern.substr(2), acc);
         }
         return false;
     }
